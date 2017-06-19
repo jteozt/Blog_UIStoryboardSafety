@@ -29,4 +29,30 @@ let viewController = storyboard.instantiateViewController(ArticleViewController.
 viewController.printHeadline()
 ````
 
+Alternative:
 
+````
+protocol StoryboardInstantiable { }
+extension StoryboardInstantiable where Self: UIViewController {
+  static var className: String {
+    return String(describing: Self.self)
+  }
+init(from storyboard: UIStoryboard) {
+  let controller = storyboard.instantiateViewController(withIdentifier: Self.className)
+  guard let viewController = controller as? Self else {
+    fatalError("Could not instantiate controller from class name '\(Self.className)'")
+  }
+  self = viewController
+  }
+}
+extension UIViewController: StoryboardInstantiable { }
+````
+
+To use: 
+
+````
+let storyboard = UIStoryboard.storyboard(.news)
+let viewController = ArticleViewController(from: storyboard)
+````
+
+Credit: Dinesh Raja Soundrapandian
